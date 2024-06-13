@@ -40,11 +40,23 @@ def validate_inputs(name, email, phone, password, confirm_password):
 
     return error_message
 
+# função que ira construir a tela de register
+
 def open_registration_window():
+    """
+    Cria e exibe uma tela de registro com campos de entrada de usuário e um botão de registro.
+
+    - Usa Tkinter para elementos da GUI.
+    - Fornece feedback visual por meio de mudanças de cor para o campo de número de telefone e mensagens de erro.
+    - Inclui marcadores de posição para validação (`validar_entradas`) e lógica de registro (`registrar`).
+    """
+
     registration_window = Toplevel(window)
     registration_window.geometry("800x800")
     registration_window.configure(bg="#F39421")
     registration_window.title("Cadastro")
+
+    # Cria um canvas para a janela de registro
 
     registration_canvas = Canvas(
         registration_window,
@@ -57,6 +69,10 @@ def open_registration_window():
     )
     registration_canvas.place(x=0, y=0)
 
+    # =============================================
+
+    # Texto do título
+
     registration_canvas.create_text(
         50.0,
         20.0,
@@ -66,13 +82,19 @@ def open_registration_window():
         font=("MontserratItalic Medium", 48 * -1)
     )
 
+    # ============================================
+
+    
+
+    # Lista de campos do formulário
+
     fields = ["Nome", "Email", "Telefone", "Senha", "Confirme a Senha"]
     entry_fields = []
     for i, field in enumerate(fields):
         entry = Entry(
             registration_window,
             bd=0,
-            bg="#FFFDFD" if i != 2 else "#FFFFFF",  # Cor diferente para o campo de telefone
+            bg="#FFFDFD" if i != 2 else "#FFFFFF",  
             fg="#000716",
             highlightthickness=0,
             font=("Helvetica", 16),
@@ -95,7 +117,8 @@ def open_registration_window():
             font=("Lato Medium", 18 * -1)
         )
 
-    # Função para lidar com o evento de registro
+        # ==================================================
+   
     def register():
         values = [entry.get() for entry in entry_fields]
         error_message = validate_inputs(*values)
@@ -105,9 +128,10 @@ def open_registration_window():
         else:
             registration_error_label.config(text="Cadastro realizado com sucesso!", fg="green")
             print("Cadastro realizado")
-            # Aqui você pode adicionar o código para realmente realizar o cadastro
+            
 
     # Adicione um botão para o registro
+            
     registration_button = Button(
         registration_window,
         text="Register",
@@ -126,6 +150,8 @@ def open_registration_window():
         height=78.0
     )
 
+    # ========================================================
+
     # Adicione um rótulo para exibir mensagens de erro, se houver
     registration_error_label = Label(
         registration_window,
@@ -140,7 +166,10 @@ def open_registration_window():
         height=50.0
     )
 
-# Create the main window
+    # =====================================================
+
+# construção da tela de login 
+    
 window = Tk()
 window.geometry("800x800")
 window.configure(bg="#F39421")
