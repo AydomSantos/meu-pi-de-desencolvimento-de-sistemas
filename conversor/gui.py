@@ -3,10 +3,15 @@ from pathlib import Path
 import requests
 
 # Função para obter o caminho relativo aos assets
-def relative_to_assets(path: str) -> Path:
-    OUTPUT_PATH = Path(__file__).parent
-    ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\Pichau\Desktop\build\assets\frame0")
-    return ASSETS_PATH / Path(path)
+def relative_to_assets(path: str) -> str:
+    # Diretório onde o script está sendo executado
+    script_dir = Path(__file__).parent
+    
+    # Caminho até a pasta assets
+    assets_path = script_dir / "C:/Users/Pichau/Desktop/build/assets/frame"
+    
+    # Retorna o caminho absoluto completo até o arquivo desejado
+    return str(assets_path / path)
 
 # Definição da lista de moedas
 moeda = ['USD', 'BRL', 'EUR', 'CAD', 'AUD', 'CHF', 'JPY', 'RUB', 'INR', 'AOA']
@@ -57,7 +62,7 @@ canvas = Canvas(
 canvas.place(x=0, y=0)
 
 # Imagem no canvas
-image_image_1 = PhotoImage(file=relative_to_assets("fundo.png"))
+image_image_1 = PhotoImage(file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(388.0, 327.0, image=image_image_1)
 
 # Texto informativo no canvas
@@ -152,7 +157,7 @@ canvas.create_rectangle(
 )
 
 # Botão de conversão (imagem)
-button_image_1 = PhotoImage(file=relative_to_assets("button_black.png"))
+button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
 button_1 = Button(
     window,
     image=button_image_1,
