@@ -8,7 +8,7 @@ def relative_to_assets(path: str) -> str:
     script_dir = Path(__file__).parent
     
     # Caminho até a pasta assets
-    assets_path = script_dir / "C:/Users/Pichau/Desktop/build/assets/frame"
+    assets_path = script_dir / "C:/Users/Pichau/Desktop/meu-pi-de-desencolvimento-de-sistemas-main/conversor/assets/frame"
     
     # Retorna o caminho absoluto completo até o arquivo desejado
     return str(assets_path / path)
