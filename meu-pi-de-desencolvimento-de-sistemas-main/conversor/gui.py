@@ -7,8 +7,8 @@ def relative_to_assets(path: str) -> str:
     # Diretório onde o script está sendo executado
     script_dir = Path(__file__).parent
     
-    # Caminho até a pasta assets
-    assets_path = script_dir / "C:/Users/Pichau/Desktop/meu-pi-de-desencolvimento-de-sistemas-main/conversor/assets/frame"
+   # Caminho relativo até a pasta assets
+    assets_path = script_dir / "assets" / "frame"
     
     # Retorna o caminho absoluto completo até o arquivo desejado
     return str(assets_path / path)
@@ -157,6 +157,7 @@ canvas.create_rectangle(
 )
 
 # Botão de conversão (imagem)
+
 button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
 button_1 = Button(
     window,
