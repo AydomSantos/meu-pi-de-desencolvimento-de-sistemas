@@ -1,12 +1,26 @@
 
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Button, PhotoImage, Label, Toplevel
+from tkinter import Tk, Canvas, Entry, Button, PhotoImage, Label, Toplevel,messagebox,StringVar,OptionMenu
 import re
+from tkinter import *
+import requests
 
 # Define o caminho de saída
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path("assets/frame0")
+ASSETS_PATH = OUTPUT_PATH / Path("assets/img_sistema")
 
+
+def relative_to_assets_converso(path: str) -> str:
+    # Diretório onde o script está sendo executado
+    script_dir = Path(__file__).parent
+    
+   # Caminho relativo até a pasta assets
+    assets_path = script_dir / "assets" / "img_converso"
+    
+    # Retorna o caminho absoluto completo até o arquivo desejado
+    return str(assets_path / path)
+
+# Define o caminho de saída relativo
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
@@ -58,6 +72,7 @@ def validate_login():
     else:
         error_label.config(text="Login realizado com sucesso!", fg="green")
         print("Login realizado")
+        open_conversor_window()
         # Aqui
 # função que ira construir a tela de register
 
@@ -186,6 +201,177 @@ def open_registration_window():
     )
 
     # =====================================================
+
+ 
+
+# Função para realizar a conversão
+def converter():
+    try:
+        moeda_de_valor = moeda_de.get()
+        moeda_para_valor = moeda_para.get()
+        valor_entrada = float(entrada_valor.get().replace(',', '.'))  # Tratamento para aceitar vírgula como separador decimal
+
+        # Chamada à API para obter as taxas de câmbio
+        url = f'https://api.exchangerate-api.com/v4/latest/{moeda_de_valor}'
+        response = requests.get(url)
+        data = response.json()
+        
+        if response.status_code == 200:
+            taxa_cambio = data['rates'][moeda_para_valor]
+            valor_convertido = valor_entrada * taxa_cambio
+            
+            # Formatação do valor convertido para exibição
+            simbolo_moeda = dict_moedas.get(moeda_para_valor, moeda_para_valor)
+            valor_formatado = f"{simbolo_moeda} {valor_convertido:.2f}"
+            
+            # Atualiza o label com o resultado da conversão
+            app_resultado.config(text=valor_formatado)
+        else:
+            messagebox.showerror('Erro!', 'Falha ao obter as taxas de câmbio. Tente novamente mais tarde.')
+
+    except Exception as e:
+        messagebox.showerror('Erro!', f'Ocorreu um erro na conversão: {str(e)}')
+
+def open_conversor_window():
+    conversor_window = Toplevel(window)
+    conversor_window.geometry("776x654")
+    conversor_window.configure(bg="#FFFFFF")
+    conversor_window.title("Conversor")
+
+    moeda = ['USD', 'BRL', 'EUR', 'CAD', 'AUD', 'CHF', 'JPY', 'RUB', 'INR', 'AOA']
+    global dict_moedas
+    dict_moedas = {
+        'USD': '$',
+        'BRL': 'R$',
+        'EUR': '€',
+        'CAD': 'C$',
+        'AUD': 'A$',
+        'CHF': 'Fr',
+        'JPY': '¥',
+        'RUB': 'RUB',
+        'INR': '₹',
+        'AOA': 'Kz'
+    }
+
+    # Canvas para elementos gráficos
+    canvas = Canvas(
+        conversor_window,
+        bg="#FFFFFF",
+        height=654,
+        width=776,
+        bd=0,
+        highlightthickness=0,
+        relief="ridge"
+    )
+    canvas.place(x=0, y=0)
+
+    # Imagem de fundo no canvas
+    image_image_1 = PhotoImage(file=relative_to_assets_converso("tela.png"))
+    canvas.create_image(388.0, 327.0, image=image_image_1)
+
+    # Texto informativo no canvas
+    canvas.create_text(
+        33.0,
+        241.0,
+        anchor="nw",
+        text="Digite o valor em",
+        fill="#000000",
+        font=("Inter Medium", 16 * -1)
+    )
+
+    # Label de resultado da conversão
+    global app_resultado
+    app_resultado = Label(
+        conversor_window,
+        text='',
+        width=16,
+        height=2,
+        anchor='center',
+        font=('Ivy 15 bold'),
+        bg='#FFFFFF',
+        fg='#333333'
+    )
+    app_resultado.place(x=430, y=335, width=315, height=80)
+
+    # Entrada para o valor a ser convertido
+    global entrada_valor
+    entrada_valor = Entry(
+        conversor_window,
+        width=22,
+        justify='center',
+        font=('Ivy 12 bold'),
+        relief='solid',
+        bg='#FFFFFF',
+        fg='#000000'
+    )
+    entrada_valor.place(x=40, y=335, width=310, height=80)
+
+    # Dropdown de seleção de moeda "De"
+    global moeda_de
+    moeda_de = StringVar()
+    moeda_de.set(moeda[0])
+
+    dropdown_de = OptionMenu(
+        conversor_window,
+        moeda_de,
+        *moeda
+    )
+    dropdown_de.config(
+        width=8,
+        font=('Ivy 12 bold'),
+        bg='#FFFFFF',
+        fg='#333333',
+        relief='solid'
+    )
+    dropdown_de.place(x=200, y=235)
+
+    # Dropdown de seleção de moeda "Para"
+    global moeda_para
+    moeda_para = StringVar()
+    moeda_para.set(moeda[1])  # Define o valor inicial do dropdown
+
+    dropdown_para = OptionMenu(
+        conversor_window,
+        moeda_para,
+        *moeda
+    )
+    dropdown_para.config(
+        width=8,
+        font=('Ivy 12 bold'),
+        bg='#FFFFFF',
+        fg='#333333',
+        relief='solid'
+    )
+    dropdown_para.place(x=578, y=233, width=180, height=32)
+
+    # Texto informativo no canvas
+    canvas.create_text(
+        429.0,
+        237.0,
+        anchor="nw",
+        text="Esse é o valor em",
+        fill="#000000",
+        font=("Inter Medium", 16 * -1)
+    )
+
+ # Botão de conversão (imagem)
+    button_image_1 = PhotoImage(file=relative_to_assets_converso("conversor_button.png"))
+    button_1 = Button(
+    conversor_window,
+        image=button_image_1,
+        borderwidth=0,
+        highlightthickness=0,
+        command=converter,
+        relief="flat"
+    )
+
+    # Adicione o botão ao canvas na posição específica desejada
+    canvas.create_window(200, 565, window=button_1)  # Ajuste as coordenadas conforme necessário
+
+    # Executar o loop principal
+    conversor_window.mainloop()
+
+    
 
 # construção da tela de login 
     
